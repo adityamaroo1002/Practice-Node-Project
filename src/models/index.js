@@ -16,6 +16,11 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+
 fs
   .readdirSync(__dirname)
   .filter(file => {
@@ -35,7 +40,14 @@ Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
-});
+  })
+  await db.Airplane.sync({alert: true})
+  console.log("AirPlane updated succesfully")
+}
+  catch (error) {
+    console.error('Unable to connect or sync:', error);
+  }
+})();
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
